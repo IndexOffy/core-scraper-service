@@ -2,8 +2,8 @@
 
 from typing import List
 
-from src.abc.browser import Browser
-from src.data import DataInput
+from source.abc.browser import Browser
+from source.data import DataInput
 
 
 class Explorer:

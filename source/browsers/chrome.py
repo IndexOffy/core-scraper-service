@@ -7,7 +7,7 @@ from get_gecko_driver import GetGeckoDriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-from src.abc.browser import Browser
+from source.abc.browser import Browser
 
 
 class Chrome(Browser):

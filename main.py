@@ -1,8 +1,8 @@
 """Main"""
 
-from src.data import DataInput
-from src.explorer import Explorer
-from src.browsers.chrome import Chrome
+from source.data import DataInput
+from source.explorer import Explorer
+from source.browsers.chrome import Chrome
 
 
 def main():
