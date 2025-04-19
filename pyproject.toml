@@ -3,7 +3,7 @@ name = "core-scraper-service"
 version = "0.1.0"
 description = "🐍 Tor-Network - Core"
 authors = ["FernandoCelmer <email@fernandocelmer.com>"]
-license = "GPL-3.0"
+license = "GPL-3.0-only"
 readme = "README.md"
 
 [tool.poetry.dependencies]
