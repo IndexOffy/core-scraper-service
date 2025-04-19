@@ -1,13 +1,8 @@
-"""
-Initial Module
-"""
+"""Main"""
 
-from dataclasses import dataclass
-from typing import List, Optional
-
-from data import DataInput
-from explorer import Explorer
-from browser import BrowserChrome
+from src.data import DataInput
+from src.explorer import Explorer
+from src.browsers.chrome import Chrome
 
 
 def main():
@@ -15,7 +10,7 @@ def main():
     initial_data.append(DataInput(url="https://google.com"))
     initial_data.append(DataInput(url="https://fernandocelmer.com"))
 
-    browser = BrowserChrome(
+    browser = Chrome(
         headless=False,
         multi_instances=True
     )

@@ -1,12 +1,9 @@
-"""
-Explorer Module
-"""
+"""Explorer Module"""
 
-from copy import copy, deepcopy
 from typing import List
 
-from browser import Browser
-from data import DataInput
+from src.abc.browser import Browser
+from src.data import DataInput
 
 
 class Explorer:
@@ -19,7 +16,7 @@ class Explorer:
         self.browser = browser
 
     def get(self):
-        for index, resource in enumerate(self.data, start=1):
+        for _, resource in enumerate(self.data, start=1):
             try:
                 driver = self.browser.get_instance()
                 driver.get(resource.url)

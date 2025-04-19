@@ -4,7 +4,6 @@ Dataclass Module
 
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict
-from bs4 import BeautifulSoup
 
 
 @dataclass

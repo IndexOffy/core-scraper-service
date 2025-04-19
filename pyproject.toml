@@ -13,6 +13,7 @@ selenium = "^4.18.1"
 webdriver-manager = "^4.0.1"
 tbselenium = "^0.8.1"
 get-gecko-driver = "^1.3.13"
+dotflow = "^0.11.0"
 
 
 [build-system]
