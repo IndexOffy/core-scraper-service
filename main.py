@@ -1,28 +1,29 @@
 """Main"""
 
-from source.data import DataInput
-from source.explorer import Explorer
-from source.browsers.chrome import Chrome
+from dotflow import DotFlow
+
+from source.tasks import (
+    explore_outside,
+    href_url_extractor,
+    text_url_extractor
+)
 
 
 def main():
-    initial_data = []
-    initial_data.append(DataInput(url="https://google.com"))
-    initial_data.append(DataInput(url="https://fernandocelmer.com"))
+    initials = []
+    workflow = DotFlow()
 
-    browser = Chrome(
-        headless=False,
-        multi_instances=True
-    )
+    for link in initials:
+        workflow.task.add(
+            step=[
+                explore_outside,
+                href_url_extractor,
+                text_url_extractor
+            ],
+            initial_context=link
+        )
 
-    explorer = Explorer(
-        data=initial_data,
-        browser=browser,
-    )
-
-    explorer.get()
-    for data in explorer.data:
-        print(data.title)
+    workflow.start()
 
 
 if __name__ == '__main__':
