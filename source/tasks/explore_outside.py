@@ -1,18 +1,17 @@
 from dotflow import action
 
-from source.serializers.content import Content
-from source.browsers.chrome import Chrome
+from source.core.serializers.content import Content
+from source.core.browsers.chrome import Chrome
 
 
 @action
-def explore_outside(initial_context):
+def explore_outside(previous_context):
     browser = Chrome()
-
     driver = browser.get_instance()
-    driver.get(initial_context.storage)
+    driver.get(previous_context.storage)
 
     return Content(
-        url=initial_context.storage,
+        url=previous_context.storage,
         title=driver.title,
         source=driver.page_source
     )

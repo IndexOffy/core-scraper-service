@@ -9,5 +9,6 @@ class Content(BaseModel):
     title: str = Field(default=None, description="Page Title")
     author: str = Field(default=None, description="Author Name")
     source: str = Field(default=None, description="Page Source")
-    hrefs: List[str] = Field(default=[], description="References")
+    keywords: List[str] = Field(default=[], description="Keywords")
     subpages: List[str] = Field(default=[], description="Subpages")
+    hrefs: List[str] = Field(default=[], description="References")

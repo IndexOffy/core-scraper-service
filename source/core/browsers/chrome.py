@@ -7,7 +7,7 @@ from get_gecko_driver import GetGeckoDriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-from source.abc.browser import Browser
+from source.core.abc.browser import Browser
 
 
 class Chrome(Browser):
@@ -16,6 +16,7 @@ class Chrome(Browser):
         get_driver = GetGeckoDriver()
         get_driver.install()
         base_path = ChromeDriverManager().install()
+
         if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
             return os.path.join(os.path.dirname(base_path), "chromedriver")
         return base_path
