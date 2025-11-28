@@ -1,0 +1,16 @@
+{
+  "name": "dotflow-api",
+  "version": "0.1.0",
+  "description": "dotflow API - Serverless Framework configuration",
+  "private": true,
+  "scripts": {
+    "load-test": "k6 run k6/load-test.js",
+    "load-test:light": "k6 run --config k6/config.js k6/load-test.js",
+    "load-test:smoke": "k6 run k6/load-test.js --vus 1 --duration 1m"
+  },
+  "devDependencies": {
+    "serverless": "^3.40.0",
+    "serverless-python-requirements": "^6.1.0",
+    "serverless-scriptable-plugin": "^1.0.5"
+  }
+}

@@ -1,0 +1,114 @@
+service: dotflow-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: ${self:custom.region}
+  timeout: 900
+  memorySize: 3008
+  stage: ${self:custom.stage}
+  httpApi:
+    cors: true
+    corsConfig:
+      allowOrigins:
+        - '*'
+      allowMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowHeaders:
+        - Content-Type
+        - Authorization
+
+  environment:
+    SCOPE: ${self:custom.scope.${self:provider.stage}, 'production'}
+    DATABASE_URL: ${env:DATABASE_URL, ''}
+    API_VERSION: ${env:API_VERSION, '0.1.0'}
+    CORS_ORIGINS: ${env:CORS_ORIGINS, '["*"]'}
+    TOR_BROWSER_PATH: ${env:TOR_BROWSER_PATH, ''}
+    TOR_DATA_DIR: ${env:TOR_DATA_DIR, '/tmp/tor-data'}
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
+
+functions:
+  api:
+    handler: lambda_handler.lambda_handler
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
+      - httpApi:
+          path: /
+          method: ANY
+
+plugins:
+  - serverless-python-requirements
+  - serverless-scriptable-plugin
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  scope:
+    dev: development
+    prod: production
+    test: test
+  pythonRequirements:
+    dockerizePip: true
+    dockerImage: public.ecr.aws/sam/build-python3.12:latest
+    layer: true
+    attachAllFunctions: true
+    slim: false
+    strip: false
+    zip: true
+    fileName: requirements-lambda.txt
+    pipCmdExtraArgs:
+      - --no-cache-dir
+    usePoetry: false
+    usePipenv: false
+    cleanupZipHelper: true
+    noDeploy: false
+    noDeps: false
+    invalidateCaches: true
+  noDepsExclude:
+    - boto3
+    - botocore
+
+scriptable:
+  hooks:
+    before:package:createDeploymentArtifacts:
+      - bash scripts/download-tor-browser.sh opt/tor-browser || echo "Tor Browser download failed, will use auto-detection"
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!tests/**'
+    - '!.git/**'
+    - '!.venv/**'
+    - '!venv/**'
+    - '!__pycache__/**'
+    - '!*.pyc'
+    - '!*.pyo'
+    - '!*.pyd'
+    - '!.pytest_cache/**'
+    - '!.mypy_cache/**'
+    - '!*.md'
+    - '!*.txt'
+    - '!requirements-lambda.txt'
+    - '!.gitignore'
+    - '!pytest.ini'
+    - 'opt/tor-browser/**'
+    - 'scripts/**'
