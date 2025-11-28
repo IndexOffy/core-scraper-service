@@ -1,5 +1,6 @@
 [tool.poetry]
 name = "core-scraper-service"
+package-mode = false
 version = "0.1.0"
 description = "🐍 Tor-Network - Core"
 authors = ["FernandoCelmer <email@fernandocelmer.com>"]
@@ -7,18 +8,17 @@ license = "GPL-3.0-only"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-beautifulsoup4 = "^4.12.3"
+python = "^3.13"
 selenium = "^4.18.1"
 webdriver-manager = "^4.0.1"
 tbselenium = "^0.8.1"
 get-gecko-driver = "^1.3.13"
-dotflow = "^0.11.0"
 pydantic = "^2.11.3"
-bson = "^0.5.10"
-motor = "^3.7.0"
-python-dotenv = "^1.1.0"
-pymongo = {extras = ["srv"], version = "^4.12.0"}
+uvicorn = "^0.38.0"
+fastapi = "^0.122.0"
+sqlalchemy = "^2.0.44"
+pymysql = "^1.1.2"
+pydantic-settings = "^2.12.0"
 
 
 [build-system]
