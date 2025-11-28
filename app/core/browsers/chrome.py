@@ -6,6 +6,7 @@ from typing import Any
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.driver_cache import DriverCacheManager
 
 from app.core.browsers.abc import Browser
 
@@ -16,12 +17,8 @@ class Chrome(Browser):
         os.environ["WDM_LOCAL"] = "1"
         os.environ["WDM_LOG_LEVEL"] = "0"
 
-        old_cwd = os.getcwd()
-        try:
-            os.chdir("/tmp")
-            base_path = ChromeDriverManager().install()
-        finally:
-            os.chdir(old_cwd)
+        cache_manager = DriverCacheManager(root_dir="/tmp")
+        base_path = ChromeDriverManager(cache_manager=cache_manager).install()
 
         if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
             self.executable = os.path.join(
