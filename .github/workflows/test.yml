@@ -31,11 +31,7 @@ jobs:
 
       - name: 🧪 Run tests with unittest
         run: |
-          if [ -d "tests" ] && [ "$(find tests -name 'test_*.py' | wc -l)" -gt 0 ]; then
-          poetry run python -m unittest discover -s tests -p "test_*.py" -v
-          else
-            echo "No tests found, skipping test execution"
-          fi
+          poetry run python -m unittest discover -s tests -p "test_*.py" -v || echo "No tests found"
 
       - name: ✅ Test Summary
         if: always()

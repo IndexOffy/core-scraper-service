@@ -24,13 +24,9 @@ runs:
     - name: 📚 Install dependencies
       shell: bash
       run: |
-        if [ "${{ inputs.install-dependencies }}" != '' ]; then
-          IFS=',' read -ra GROUPS <<< "${{ inputs.install-dependencies }}"
-          WITH_ARGS=""
-          for group in "${GROUPS[@]}"; do
-            WITH_ARGS="$WITH_ARGS --with ${group// /}"
-          done
-          poetry install --no-interaction --no-root $WITH_ARGS
-        else
-          poetry install --no-interaction --no-root
-        fi
+        IFS=',' read -ra GROUPS <<< "${{ inputs.install-dependencies }}"
+        WITH_ARGS=""
+        for group in "${GROUPS[@]}"; do
+          WITH_ARGS="$WITH_ARGS --with ${group// /}"
+        done
+        poetry install --no-interaction --no-root $WITH_ARGS
