@@ -2,6 +2,7 @@
 Scraper service for web scraping operations using Tor Browser.
 """
 
+import contextlib
 import logging
 import time
 from typing import Any
@@ -205,7 +206,5 @@ class ScraperService:
             raise ScrapingError(f"Scraping error: {str(e)}") from e
         finally:
             if driver:
-                try:
+                with contextlib.suppress(Exception):
                     driver.quit()
-                except Exception:
-                    pass
