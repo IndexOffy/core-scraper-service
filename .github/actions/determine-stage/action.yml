@@ -1,0 +1,45 @@
+name: 'Determine Stage and Scope'
+description: 'Determine deployment stage and scope based on branch'
+inputs:
+  event-name:
+    description: 'GitHub event name'
+    required: true
+  ref:
+    description: 'GitHub ref'
+    required: true
+  input-stage:
+    description: 'Input stage from workflow_dispatch'
+    required: false
+
+outputs:
+  stage:
+    description: 'Deployment stage (dev/prod)'
+    value: ${{ steps.determine.outputs.stage }}
+  scope:
+    description: 'Deployment scope (development/production)'
+    value: ${{ steps.determine.outputs.scope }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🔍 Determine stage and scope
+      id: determine
+      shell: bash
+      run: |
+        if [ "${{ inputs.event-name }}" == "workflow_dispatch" ]; then
+          STAGE="${{ inputs.input-stage }}"
+        elif [ "${{ inputs.ref }}" == "refs/heads/master" ]; then
+          STAGE="prod"
+        elif [ "${{ inputs.ref }}" == "refs/heads/develop" ]; then
+          STAGE="dev"
+        else
+          STAGE="dev"
+        fi
+
+        echo "stage=${STAGE}" >> $GITHUB_OUTPUT
+
+        if [ "${STAGE}" == "prod" ]; then
+          echo "scope=production" >> $GITHUB_OUTPUT
+        else
+          echo "scope=development" >> $GITHUB_OUTPUT
+        fi

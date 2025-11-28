@@ -1,0 +1,28 @@
+name: 'Setup Poetry'
+description: 'Setup Poetry package manager'
+inputs:
+  poetry-version:
+    description: 'Poetry version'
+    required: false
+    default: 'latest'
+  install-dependencies:
+    description: 'Install dependencies groups (comma-separated)'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 📦 Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: ${{ inputs.poetry-version }}
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+
+    - name: 📚 Install dependencies
+      if: inputs.install-dependencies != ''
+      shell: bash
+      run: |
+        poetry install --no-interaction --no-root --with ${{ inputs.install-dependencies }}

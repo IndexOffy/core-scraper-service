@@ -1,0 +1,22 @@
+name: 'Generate API Version'
+description: 'Generate incremental API version based on run number'
+inputs:
+  run-number:
+    description: 'GitHub run number'
+    required: true
+
+outputs:
+  version:
+    description: 'Generated API version'
+    value: ${{ steps.version.outputs.version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 📝 Generate API version
+      id: version
+      shell: bash
+      run: |
+        VERSION="1.0.${{ inputs.run-number }}"
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Generated version: ${VERSION}"

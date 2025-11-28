@@ -1,0 +1,78 @@
+name: 'Deploy to AWS Lambda'
+description: 'Deploy scraper service to AWS Lambda using Serverless Framework'
+inputs:
+  stage:
+    description: 'Deployment stage'
+    required: true
+  region:
+    description: 'AWS region'
+    required: false
+    default: 'us-east-1'
+  api-version:
+    description: 'API version'
+    required: true
+  cors-origins:
+    description: 'CORS origins (JSON array)'
+    required: false
+    default: '["*"]'
+  tor-browser-path:
+    description: 'Tor Browser path (Lambda Layer path)'
+    required: false
+    default: ''
+  tor-data-dir:
+    description: 'Tor Browser data directory'
+    required: false
+    default: ''
+  database-url:
+    description: 'MySQL database connection URL'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🐍 Ensure Python 3.13 is available
+      shell: bash
+      run: |
+        if ! command -v python3.13 &> /dev/null; then
+          if command -v python3 &> /dev/null; then
+            PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2)
+            if [ "$PYTHON_VERSION" == "3.13" ]; then
+              sudo ln -sf $(which python3) /usr/local/bin/python3.13
+            else
+              echo "Python 3.13 is required but found $PYTHON_VERSION"
+              exit 1
+            fi
+          else
+            echo "Python 3 is not installed"
+            exit 1
+          fi
+        fi
+
+    - name: 📦 Install Serverless plugins
+      shell: bash
+      run: |
+        if [ -f package.json ]; then
+          npm install
+        else
+          serverless plugin install -n serverless-python-requirements
+        fi
+
+    - name: 🚀 Deploy to AWS Lambda
+      shell: bash
+      env:
+        API_VERSION: ${{ inputs.api-version }}
+        CORS_ORIGINS: ${{ inputs.cors-origins }}
+        TOR_BROWSER_PATH: ${{ inputs.tor-browser-path }}
+        TOR_DATA_DIR: ${{ inputs.tor-data-dir }}
+        DATABASE_URL: ${{ inputs.database-url }}
+      run: |
+        echo "🚀 Deploying to AWS Lambda..."
+        echo "Stage: ${{ inputs.stage }}"
+        echo "Region: ${{ inputs.region }}"
+        echo "API Version: ${{ inputs.api-version }}"
+
+        serverless deploy \
+          --stage ${{ inputs.stage }} \
+          --region ${{ inputs.region }} \
+          --verbose

@@ -1,0 +1,25 @@
+name: 'Setup Environment'
+description: 'Setup Python, Node.js and Serverless Framework'
+runs:
+  using: 'composite'
+  steps:
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version || '3.13' }}
+
+    - name: 📦 Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version || '20' }}
+
+    - name: 📦 Install Serverless Framework
+      shell: bash
+      run: npm install -g serverless@3
+
+    - name: 📦 Install npm dependencies
+      shell: bash
+      run: |
+        if [ -f package.json ]; then
+          npm install
+        fi
