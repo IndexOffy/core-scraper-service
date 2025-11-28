@@ -340,26 +340,6 @@ files = [
 ]
 
 [[package]]
-name = "dotflow"
-version = "0.11.1"
-description = "🎲 Dotflow turns an idea into flow!"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "dotflow-0.11.1-py3-none-any.whl", hash = "sha256:69cdc2d081547d569d91f232310716c190616ae66baab5fe828d0fb39a4705e5"},
-    {file = "dotflow-0.11.1.tar.gz", hash = "sha256:ae918800a82c46247a0ca86f38bb559b63397613a06bb909273bf29edbdb60f6"},
-]
-
-[package.dependencies]
-pydantic = "*"
-rich = "*"
-typing-extensions = "*"
-
-[package.extras]
-mongodb = ["dotflow-mongodb"]
-
-[[package]]
 name = "fastapi"
 version = "0.122.0"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -1234,4 +1214,4 @@ h11 = ">=0.16.0,<1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "0c2b5effdb28c7195d1307b9ee781c814ce8e304ce3e666e016a2918fb40156b"
+content-hash = "db5c759d8c80415cf8667340e51693a1fd728f0ef3771f05caa0960a75b2a303"
