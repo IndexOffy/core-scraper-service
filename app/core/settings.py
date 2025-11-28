@@ -80,9 +80,7 @@ class Settings(BaseSettings):
     ) -> dict | list | None:
         """Remove empty string values to allow defaults to be used."""
         if isinstance(data, dict):
-            return {
-                k: v for k, v in data.items() if v != "" and v is not None
-            }
+            return {k: v for k, v in data.items() if v != "" and v is not None}
         return data
 
     @property
@@ -93,9 +91,7 @@ class Settings(BaseSettings):
     @property
     def is_lambda(self) -> bool:
         """Check if running on AWS Lambda."""
-        return (
-            os.environ.get("AWS_LAMBDA_FUNCTION_NAME") is not None
-        )
+        return os.environ.get("AWS_LAMBDA_FUNCTION_NAME") is not None
 
 
 @lru_cache

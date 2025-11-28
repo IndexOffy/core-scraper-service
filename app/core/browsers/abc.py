@@ -11,9 +11,7 @@ class Browser(ABC):
     instance = None
 
     def __init__(
-        self,
-        headless: bool = True,
-        multi_instances: bool = False
+        self, headless: bool = True, multi_instances: bool = False
     ) -> None:
         """
         Initialize browser.

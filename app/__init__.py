@@ -4,8 +4,6 @@ This module contains the FastAPI application.
 
 __version__ = "0.1.0"
 
-import logging
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
