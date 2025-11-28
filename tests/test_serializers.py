@@ -2,7 +2,7 @@
 
 import unittest
 
-from pydantic import ValidationError
+from pydantic import HttpUrl, ValidationError
 
 from app.serializers.scraper import ScrapeRequest, ScrapeResponse
 
@@ -12,7 +12,7 @@ class TestScrapeRequest(unittest.TestCase):
 
     def test_valid_request_defaults(self):
         """Test valid request with default values."""
-        request = ScrapeRequest(url="https://example.com")
+        request = ScrapeRequest(url=HttpUrl("https://example.com"))
         self.assertEqual(str(request.url), "https://example.com/")
         self.assertEqual(request.browser_type, "tor")
         self.assertEqual(request.wait_time, 5)
@@ -23,7 +23,7 @@ class TestScrapeRequest(unittest.TestCase):
     def test_valid_request_custom_values(self):
         """Test valid request with custom values."""
         request = ScrapeRequest(
-            url="https://example.com",
+            url=HttpUrl("https://example.com"),
             browser_type="chrome",
             wait_time=10,
             headless=False,
@@ -39,22 +39,25 @@ class TestScrapeRequest(unittest.TestCase):
     def test_invalid_browser_type(self):
         """Test invalid browser type raises ValidationError."""
         with self.assertRaises(ValidationError):
-            ScrapeRequest(url="https://example.com", browser_type="firefox")
+            ScrapeRequest(
+                url=HttpUrl("https://example.com"),
+                browser_type="firefox",  # type: ignore[arg-type]
+            )
 
     def test_invalid_wait_time_too_low(self):
         """Test wait_time below minimum raises ValidationError."""
         with self.assertRaises(ValidationError):
-            ScrapeRequest(url="https://example.com", wait_time=-1)
+            ScrapeRequest(url=HttpUrl("https://example.com"), wait_time=-1)
 
     def test_invalid_wait_time_too_high(self):
         """Test wait_time above maximum raises ValidationError."""
         with self.assertRaises(ValidationError):
-            ScrapeRequest(url="https://example.com", wait_time=61)
+            ScrapeRequest(url=HttpUrl("https://example.com"), wait_time=61)
 
     def test_invalid_url(self):
         """Test invalid URL raises ValidationError."""
         with self.assertRaises(ValidationError):
-            ScrapeRequest(url="not-a-url")
+            ScrapeRequest(url="not-a-url")  # type: ignore[arg-type]
 
 
 class TestScrapeResponse(unittest.TestCase):
@@ -63,10 +66,12 @@ class TestScrapeResponse(unittest.TestCase):
     def test_valid_response_minimal(self):
         """Test valid response with minimal data."""
         response = ScrapeResponse(
-            url="https://example.com",
+            url=str(HttpUrl("https://example.com")),
             title="Example",
+            text=None,
+            html=None,
         )
-        self.assertEqual(response.url, "https://example.com")
+        self.assertEqual(response.url, "https://example.com/")
         self.assertEqual(response.title, "Example")
         self.assertIsNone(response.text)
         self.assertIsNone(response.html)
@@ -76,7 +81,7 @@ class TestScrapeResponse(unittest.TestCase):
     def test_valid_response_full(self):
         """Test valid response with all fields."""
         response = ScrapeResponse(
-            url="https://example.com",
+            url=str(HttpUrl("https://example.com")),
             title="Example",
             text="Some text",
             html="<html></html>",
@@ -84,7 +89,7 @@ class TestScrapeResponse(unittest.TestCase):
             images=["https://example.com/image1.jpg"],
             metadata={"key": "value"},
         )
-        self.assertEqual(response.url, "https://example.com")
+        self.assertEqual(response.url, "https://example.com/")
         self.assertEqual(response.title, "Example")
         self.assertEqual(response.text, "Some text")
         self.assertEqual(response.html, "<html></html>")
@@ -94,7 +99,12 @@ class TestScrapeResponse(unittest.TestCase):
 
     def test_response_defaults(self):
         """Test response with default values."""
-        response = ScrapeResponse(url="https://example.com")
+        response = ScrapeResponse(
+            url=str(HttpUrl("https://example.com")),
+            title="",
+            text=None,
+            html=None,
+        )
         self.assertEqual(response.links, [])
         self.assertEqual(response.images, [])
         self.assertEqual(response.metadata, {})

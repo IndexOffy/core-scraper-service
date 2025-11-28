@@ -1,14 +1,15 @@
 """ABC Browser"""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class Browser(ABC):
     """Abstract base class for browser implementations."""
 
-    executable = None
-    options = None
-    instance = None
+    executable: str | None = None
+    options: Any = None
+    instance: Any = None
 
     def __init__(
         self, headless: bool = True, multi_instances: bool = False
@@ -37,6 +38,6 @@ class Browser(ABC):
         pass
 
     @abstractmethod
-    def get_instance(self) -> None:
+    def get_instance(self) -> Any:
         """Get browser driver instance."""
         pass

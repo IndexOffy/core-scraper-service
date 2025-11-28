@@ -38,7 +38,7 @@ class ScraperService:
             WebDriverException: If browser fails to initialize
         """
         if browser_type.lower() == "chrome":
-            browser = Chrome(
+            browser: Any = Chrome(
                 headless=headless,
                 multi_instances=True,
             )
@@ -72,7 +72,7 @@ class ScraperService:
     def _extract_title(self, driver) -> str | None:
         """Extract page title."""
         try:
-            return driver.title
+            return driver.title  # type: ignore[no-any-return]
         except Exception:
             return None
 
@@ -80,14 +80,14 @@ class ScraperService:
         """Extract text content from page."""
         try:
             body = driver.find_element(By.TAG_NAME, "body")
-            return body.text
+            return body.text  # type: ignore[no-any-return]
         except Exception:
             return None
 
     def _extract_html(self, driver) -> str | None:
         """Extract HTML content from page."""
         try:
-            return driver.page_source
+            return driver.page_source  # type: ignore[no-any-return]
         except Exception:
             return None
 

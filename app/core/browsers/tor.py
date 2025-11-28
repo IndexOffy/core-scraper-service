@@ -6,6 +6,7 @@ import platform
 import tarfile
 import urllib.request
 from pathlib import Path
+from typing import Any
 
 from selenium import webdriver
 from tbselenium.common import USE_RUNNING_TOR
@@ -198,9 +199,9 @@ class TorBrowser(Browser):
 
         driver = TorBrowserDriver(tor_browser_path, **driver_kwargs)
         driver.implicitly_wait(5)
-        return driver
+        return driver  # type: ignore[no-any-return]
 
-    def get_instance(self) -> webdriver.Firefox:
+    def get_instance(self) -> Any:
         """
         Get Tor Browser driver instance.
 

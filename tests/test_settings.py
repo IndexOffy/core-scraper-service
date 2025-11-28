@@ -42,7 +42,7 @@ class TestSettings(unittest.TestCase):
     def test_cors_origins_json_string(self):
         """Test CORS origins parsing from JSON string."""
         cors_json = '["https://example.com", "https://test.com"]'
-        settings = Settings(cors_origins=cors_json)
+        settings = Settings(cors_origins=cors_json)  # type: ignore[arg-type]
         self.assertEqual(len(settings.cors_origins), 2)
         self.assertIn("https://example.com", settings.cors_origins)
         self.assertIn("https://test.com", settings.cors_origins)
@@ -50,7 +50,7 @@ class TestSettings(unittest.TestCase):
     def test_cors_origins_comma_separated(self):
         """Test CORS origins parsing from comma-separated string."""
         cors_str = "https://example.com,https://test.com"
-        settings = Settings(cors_origins=cors_str)
+        settings = Settings(cors_origins=cors_str)  # type: ignore[arg-type]
         self.assertEqual(len(settings.cors_origins), 2)
         self.assertIn("https://example.com", settings.cors_origins)
         self.assertIn("https://test.com", settings.cors_origins)

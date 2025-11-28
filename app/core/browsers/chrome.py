@@ -1,6 +1,7 @@
 """Chrome Browser Module"""
 
 import os
+from typing import Any
 
 from get_gecko_driver import GetGeckoDriver
 from selenium import webdriver
@@ -29,7 +30,7 @@ class Chrome(Browser):
             options.add_argument("--headless")
         self.options = options
 
-    def get_instance(self) -> None:
+    def get_instance(self) -> Any:
         def new_driver():
             driver = webdriver.Chrome(
                 service=Service(self.executable), options=self.options
