@@ -19,8 +19,7 @@ router_scraper = APIRouter()
     status_code=status.HTTP_200_OK,
 )
 def scrape_page(request: ScrapeRequest):
-    """
-    """
+    """Scrape a webpage using Tor Browser or Chrome with Selenium."""
     try:
         service = ScraperService()
         result = service.scrape(request)
