@@ -88,15 +88,14 @@ class TestChromeBrowser(unittest.TestCase):
     """Test Chrome browser class."""
 
     @patch("app.core.browsers.chrome.ChromeDriverManager")
-    @patch("app.core.browsers.chrome.GetGeckoDriver")
-    def test_chrome_initialization(self, mock_gecko, mock_chrome_manager):
+    @patch.dict("os.environ", {"HOME": "/tmp", "WDM_LOCAL": "1"})
+    def test_chrome_initialization(self, mock_chrome_manager):
         """Test Chrome browser initialization."""
         from app.core.browsers.chrome import Chrome
 
         mock_chrome_manager.return_value.install.return_value = (
             "/mock/chromedriver"
         )
-        mock_gecko.return_value.install.return_value = None
 
         browser = Chrome(headless=True, multi_instances=True)
         self.assertTrue(browser.headless)
