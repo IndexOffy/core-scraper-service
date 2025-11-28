@@ -12,12 +12,16 @@ from app.core.browsers.abc import Browser
 
 class Chrome(Browser):
     def _set_executable(self) -> None:
-        if not os.environ.get("HOME") or os.environ.get("HOME") == "/":
-            os.environ["HOME"] = "/tmp"
-        if not os.environ.get("WDM_LOCAL"):
-            os.environ["WDM_LOCAL"] = "1"
+        os.environ["HOME"] = "/tmp"
+        os.environ["WDM_LOCAL"] = "1"
+        os.environ["WDM_LOG_LEVEL"] = "0"
 
-        base_path = ChromeDriverManager().install()
+        old_cwd = os.getcwd()
+        try:
+            os.chdir("/tmp")
+            base_path = ChromeDriverManager().install()
+        finally:
+            os.chdir(old_cwd)
 
         if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
             self.executable = os.path.join(
