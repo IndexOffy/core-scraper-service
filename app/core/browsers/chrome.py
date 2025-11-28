@@ -3,7 +3,6 @@
 import os
 from typing import Any
 
-from get_gecko_driver import GetGeckoDriver
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -13,8 +12,11 @@ from app.core.browsers.abc import Browser
 
 class Chrome(Browser):
     def _set_executable(self) -> None:
-        get_driver = GetGeckoDriver()
-        get_driver.install()
+        if not os.environ.get("HOME") or os.environ.get("HOME") == "/":
+            os.environ["HOME"] = "/tmp"
+        if not os.environ.get("WDM_LOCAL"):
+            os.environ["WDM_LOCAL"] = "1"
+
         base_path = ChromeDriverManager().install()
 
         if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
