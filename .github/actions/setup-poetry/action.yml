@@ -25,4 +25,9 @@ runs:
       if: inputs.install-dependencies != ''
       shell: bash
       run: |
-        poetry install --no-interaction --no-root --with ${{ inputs.install-dependencies }}
+        IFS=',' read -ra GROUPS <<< "${{ inputs.install-dependencies }}"
+        WITH_ARGS=""
+        for group in "${GROUPS[@]}"; do
+          WITH_ARGS="$WITH_ARGS --with ${group// /}"
+        done
+        poetry install --no-interaction --no-root $WITH_ARGS

@@ -27,7 +27,7 @@ jobs:
       - name: 📦 Setup Poetry
         uses: ./.github/actions/setup-poetry
         with:
-          install-dependencies: 'testing'
+          install-dependencies: ''
 
       - name: 🧪 Run tests with unittest
         run: |

@@ -31,30 +31,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: 🐍 Ensure Python 3.13 is available
-      shell: bash
-      run: |
-        if ! command -v python3.13 &> /dev/null; then
-          if command -v python3 &> /dev/null; then
-            PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2)
-            if [ "$PYTHON_VERSION" == "3.13" ]; then
-              sudo ln -sf $(which python3) /usr/local/bin/python3.13
-            else
-              echo "Python 3.13 is required but found $PYTHON_VERSION"
-              exit 1
-            fi
-          else
-            echo "Python 3 is not installed"
-            exit 1
-          fi
-        fi
-
     - name: 📦 Install Serverless plugins
       shell: bash
       run: |
-        if [ -f package.json ]; then
-          npm install
-        else
+        if [ ! -f package.json ]; then
           serverless plugin install -n serverless-python-requirements
         fi
 

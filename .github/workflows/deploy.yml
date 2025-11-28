@@ -30,8 +30,6 @@ jobs:
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       needs.code-quality.result == 'success' &&
       needs.test.result == 'success'
-    environment:
-      name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.stage || (github.ref == 'refs/heads/master' && 'prod' || 'dev') }}
 
     steps:
       - name: 📥 Checkout code
