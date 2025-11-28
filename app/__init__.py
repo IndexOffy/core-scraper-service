@@ -18,8 +18,8 @@ def create_app() -> FastAPI:
     openapi_url = "/openapi.json" if settings.is_development else None
 
     new_app = FastAPI(
-        title="dotflow",
-        description="dotflow API",
+        title="indexoffy",
+        description="indexoffy API",
         contact={
             "name": "Fernando Celmer",
             "email": "email@fernandocelmer.com",

@@ -1,5 +1,5 @@
 """
-AWS Lambda handler for dotflow API.
+AWS Lambda handler for indexoffy API.
 """
 
 from mangum import Mangum

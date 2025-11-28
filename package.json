@@ -1,7 +1,7 @@
 {
-  "name": "dotflow-api",
+  "name": "indexoffy-api",
   "version": "0.1.0",
-  "description": "dotflow API - Serverless Framework configuration",
+  "description": "indexoffy API - Serverless Framework configuration",
   "private": true,
   "scripts": {
     "load-test": "k6 run k6/load-test.js",

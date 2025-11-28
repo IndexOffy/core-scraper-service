@@ -1,4 +1,4 @@
-service: dotflow-api
+service: indexoffy-api
 
 frameworkVersion: '3'
 
