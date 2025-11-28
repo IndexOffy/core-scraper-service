@@ -28,10 +28,8 @@ runs:
         if [ -z "$GROUPS" ]; then
           poetry install --no-interaction --no-root
         else
-          WITH_ARGS=""
-          for group in $(echo "$GROUPS" | tr ',' ' '); do
+          echo "$GROUPS" | tr ',' '\n' | while IFS= read -r group; do
             group=$(echo "$group" | xargs)
-            [ -n "$group" ] && WITH_ARGS="$WITH_ARGS --with $group"
+            [ -n "$group" ] && poetry install --no-interaction --no-root --with "$group"
           done
-          poetry install --no-interaction --no-root $WITH_ARGS
         fi
