@@ -20,7 +20,6 @@ router_scraper = APIRouter()
 )
 def scrape_page(request: ScrapeRequest):
     """
-    Scrape a webpage using Tor Browser with Selenium.
     """
     try:
         service = ScraperService()

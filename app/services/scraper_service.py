@@ -10,6 +10,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
+from app.core.browsers.chrome import Chrome
 from app.core.browsers.tor import TorBrowser
 from app.core.errors import ScrapingError
 from app.serializers.scraper import ScrapeRequest, ScrapeResponse
@@ -20,26 +21,36 @@ logger = logging.getLogger(__name__)
 class ScraperService:
     """Service for web scraping operations."""
 
-    def _initialize_browser(self, headless: bool):
+    def _initialize_browser(self, browser_type: str, headless: bool):
         """
-        Initialize Tor Browser.
+        Initialize browser (Tor or Chrome).
 
         Args:
+            browser_type: Type of browser to use ('tor' or 'chrome')
             headless: Run browser in headless mode
 
         Returns:
             WebDriver instance
 
         Raises:
-            ValueError: If Tor Browser is not configured
-            WebDriverException: If Tor Browser fails to initialize
+            ValueError: If browser is not configured
+            WebDriverException: If browser fails to initialize
         """
-        browser = TorBrowser(
-            headless=headless,
-            multi_instances=True,
-        )
+        if browser_type.lower() == "chrome":
+            browser = Chrome(
+                headless=headless,
+                multi_instances=True,
+            )
+            browser_name = "Chrome"
+        else:
+            browser = TorBrowser(
+                headless=headless,
+                multi_instances=True,
+            )
+            browser_name = "Tor Browser"
+
         driver = browser.get_instance()
-        logger.info("Tor Browser initialized successfully")
+        logger.info("%s initialized successfully", browser_name)
         return driver
 
     def _wait_for_page_load(self, driver, wait_time: int):
@@ -53,9 +64,8 @@ class ScraperService:
         if wait_time > 0:
             time.sleep(wait_time)
             WebDriverWait(driver, 10).until(
-                lambda d: d.execute_script(
-                    "return document.readyState"
-                ) == "complete"
+                lambda d: d.execute_script("return document.readyState")
+                == "complete"
             )
 
     def _extract_title(self, driver) -> str | None:
@@ -143,15 +153,14 @@ class ScraperService:
             "current_url": driver.current_url,
             "wait_time": request.wait_time,
             "headless": request.headless,
+            "browser_type": request.browser_type,
         }
 
         return response_data
 
-    def scrape(
-        self, request: ScrapeRequest
-    ) -> ScrapeResponse:
+    def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
         """
-        Scrape a webpage using Tor Browser.
+        Scrape a webpage using Tor Browser or Chrome.
 
         Args:
             request: ScrapeRequest with scraping parameters
@@ -167,8 +176,14 @@ class ScraperService:
         """
         driver = None
         try:
-            logger.info("Initializing browser for URL: %s", request.url)
-            driver = self._initialize_browser(request.headless)
+            logger.info(
+                "Initializing %s browser for URL: %s",
+                request.browser_type,
+                request.url,
+            )
+            driver = self._initialize_browser(
+                request.browser_type, request.headless
+            )
 
             driver.get(str(request.url))
             self._wait_for_page_load(driver, request.wait_time)

@@ -2,7 +2,7 @@
 Serializers for Scraper operations.
 """
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, HttpUrl
 
@@ -11,6 +11,10 @@ class ScrapeRequest(BaseModel):
     """Request schema for scraping operation."""
 
     url: HttpUrl = Field(..., description="URL to scrape")
+    browser_type: Literal["tor", "chrome"] = Field(
+        default="tor",
+        description="Browser type to use: 'tor' or 'chrome'",
+    )
     wait_time: int = Field(
         default=5,
         ge=0,
