@@ -1,0 +1,52 @@
+# Dockerfile for local testing simulating AWS Lambda environment
+# Based on AWS Lambda Python 3.12 runtime (Amazon Linux 2)
+# This simulates the Lambda execution environment for local testing
+# Note: AWS Lambda currently supports up to Python 3.12 (3.13 not yet available)
+
+FROM public.ecr.aws/lambda/python:3.12
+
+# Set working directory
+WORKDIR ${LAMBDA_TASK_ROOT}
+
+# Install system dependencies required for Selenium and browsers
+RUN yum update -y && \
+    yum install -y \
+    wget \
+    unzip \
+    curl \
+    xorg-x11-server-Xvfb \
+    gtk3 \
+    libXtst6 \
+    libxkbcommon0 \
+    libxkbcommon-x11-0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libatk1.0-0 \
+    libcairo-gobject2 \
+    libgtk-3-0 \
+    libgdk-pixbuf2.0-0 \
+    libxss1 \
+    libgbm1 \
+    && yum clean all
+
+# Copy requirements
+COPY requirements-lambda.txt ${LAMBDA_TASK_ROOT}/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements-lambda.txt
+
+# Copy application code
+COPY app ${LAMBDA_TASK_ROOT}/app
+COPY lambda_handler.py ${LAMBDA_TASK_ROOT}/
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=${LAMBDA_TASK_ROOT}
+
+# Lambda handler
+# The Lambda runtime interface expects the handler to be in the format: module.function
+CMD [ "lambda_handler.lambda_handler" ]

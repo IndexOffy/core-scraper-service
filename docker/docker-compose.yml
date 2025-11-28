@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  lambda:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.lambda
+    container_name: core-scraper-lambda
+    ports:
+      - "9000:8080"
+    environment:
+      - SCOPE=production
+      - API_VERSION=0.1.0
+      - CORS_ORIGINS=["*"]
+      - TOR_BROWSER_PATH=${TOR_BROWSER_PATH:-}
+      - TOR_DATA_DIR=${TOR_DATA_DIR:-/tmp/tor-data}
+      - DATABASE_URL=${DATABASE_URL:-}
+      - AWS_LAMBDA_FUNCTION_NAME=local-test
+    volumes:
+      - ../app:/var/task/app:ro
+    command: lambda_handler.lambda_handler
+
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: core-scraper-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - SCOPE=development
+      - API_VERSION=0.1.0
+      - CORS_ORIGINS=["*"]
+      - TOR_BROWSER_PATH=${TOR_BROWSER_PATH:-}
+      - TOR_DATA_DIR=${TOR_DATA_DIR:-/tmp/tor-data}
+      - DATABASE_URL=${DATABASE_URL:-}
+      - PYTHONPATH=/app
+    volumes:
+      - ../app:/app/app
+      - ../lambda_handler.py:/app/lambda_handler.py
+    command: python -m uvicorn app.__main__:app --host 0.0.0.0 --port 8000 --reload
+
+  tor:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.tor
+      args:
+        - TOR_BROWSER_VERSION=13.0.12
+        - TOR_BROWSER_LANG=en-US
+    container_name: core-scraper-tor
+    ports:
+      - "8001:8000"
+    environment:
+      - SCOPE=production
+      - API_VERSION=0.1.0
+      - CORS_ORIGINS=["*"]
+      - TOR_BROWSER_PATH=/opt/tor-browser
+      - TOR_DATA_DIR=/tmp/tor-data
+      - DATABASE_URL=${DATABASE_URL:-}
+      - DISPLAY=:99
+      - AWS_LAMBDA_FUNCTION_NAME=local-test
+    volumes:
+      - ../app:/app/app:ro
+      - tor-data:/tmp/tor-data
+
+volumes:
+  tor-data:
