@@ -22,12 +22,15 @@ runs:
         installer-parallel: true
 
     - name: 📚 Install dependencies
-      if: inputs.install-dependencies != ''
       shell: bash
       run: |
-        IFS=',' read -ra GROUPS <<< "${{ inputs.install-dependencies }}"
-        WITH_ARGS=""
-        for group in "${GROUPS[@]}"; do
-          WITH_ARGS="$WITH_ARGS --with ${group// /}"
-        done
-        poetry install --no-interaction --no-root $WITH_ARGS
+        if [ "${{ inputs.install-dependencies }}" != '' ]; then
+          IFS=',' read -ra GROUPS <<< "${{ inputs.install-dependencies }}"
+          WITH_ARGS=""
+          for group in "${GROUPS[@]}"; do
+            WITH_ARGS="$WITH_ARGS --with ${group// /}"
+          done
+          poetry install --no-interaction --no-root $WITH_ARGS
+        else
+          poetry install --no-interaction --no-root
+        fi
