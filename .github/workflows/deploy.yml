@@ -28,13 +28,10 @@ jobs:
     needs: [code-quality, test]
     if: |
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      (
-        (github.ref == 'refs/heads/master' && needs.code-quality.result == 'success' && needs.test.result == 'success') ||
-        (github.event.inputs.stage == 'prod' && needs.code-quality.result == 'success' && needs.test.result == 'success') ||
-        (github.ref == 'refs/heads/develop' || github.event.inputs.stage == 'dev')
-      )
+      needs.code-quality.result == 'success' &&
+      needs.test.result == 'success'
     environment:
-      name: ${{ github.ref == 'refs/heads/master' && 'prod' || github.ref == 'refs/heads/develop' && 'dev' || github.event.inputs.stage }}
+      name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.stage || (github.ref == 'refs/heads/master' && 'prod' || 'dev') }}
 
     steps:
       - name: 📥 Checkout code
