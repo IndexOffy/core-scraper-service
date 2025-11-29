@@ -24,12 +24,21 @@ class Chrome(Browser):
         os.environ["HOME"] = "/tmp"
         os.environ["WDM_LOCAL"] = "1"
         os.environ["WDM_LOG_LEVEL"] = "0"
+        os.environ["WDM_ROOT"] = "/tmp"
+        os.environ["WDM_PATH"] = "/tmp"
 
         cache_dir = "/tmp/.wdm"
         os.makedirs(cache_dir, exist_ok=True)
 
-        cache_manager = DriverCacheManager(root_dir="/tmp")
-        base_path = ChromeDriverManager(cache_manager=cache_manager).install()
+        original_cwd = os.getcwd()
+        try:
+            os.chdir("/tmp")
+            cache_manager = DriverCacheManager(root_dir="/tmp")
+            base_path = ChromeDriverManager(
+                cache_manager=cache_manager,
+            ).install()
+        finally:
+            os.chdir(original_cwd)
 
         if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
             self.executable = os.path.join(
