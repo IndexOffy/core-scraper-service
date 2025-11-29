@@ -37,6 +37,12 @@ runs:
         if [ ! -f package.json ]; then
           serverless plugin install -n serverless-python-requirements
         fi
+        npm install
+
+    - name: 📦 Install Poetry export plugin
+      shell: bash
+      run: |
+        poetry self add poetry-plugin-export || echo "Poetry export plugin already installed or not needed"
 
     - name: 🚀 Deploy to AWS Lambda
       shell: bash
