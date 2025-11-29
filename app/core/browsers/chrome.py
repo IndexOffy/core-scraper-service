@@ -1,12 +1,11 @@
 """Chrome Browser Module."""
 
 import os
+import shutil
 from typing import Any
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.driver_cache import DriverCacheManager
 
 from app.core.browsers.abc import Browser
 
@@ -21,32 +20,12 @@ class Chrome(Browser):
             self.executable = lambda_path
             return
 
-        os.environ["HOME"] = "/tmp"
-        os.environ["WDM_LOCAL"] = "1"
-        os.environ["WDM_LOG_LEVEL"] = "0"
-        os.environ["WDM_ROOT"] = "/tmp"
-        os.environ["WDM_PATH"] = "/tmp"
+        chromedriver_path = shutil.which("chromedriver")
+        if chromedriver_path:
+            self.executable = chromedriver_path
+            return
 
-        cache_dir = "/tmp/.wdm"
-        os.makedirs(cache_dir, exist_ok=True)
-
-        original_cwd = os.getcwd()
-        try:
-            os.chdir("/tmp")
-            cache_manager = DriverCacheManager(root_dir="/tmp")
-            base_path = ChromeDriverManager(
-                cache_manager=cache_manager,
-            ).install()
-        finally:
-            os.chdir(original_cwd)
-
-        if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
-            self.executable = os.path.join(
-                os.path.dirname(base_path),
-                "chromedriver",
-            )
-        else:
-            self.executable = base_path
+        self.executable = None
 
     def _set_options(self) -> None:
         options = webdriver.ChromeOptions()
@@ -72,10 +51,13 @@ class Chrome(Browser):
         """Get browser driver instance."""
 
         def new_driver() -> Any:
-            driver = webdriver.Chrome(
-                service=Service(self.executable),
-                options=self.options,
-            )
+            if self.executable:
+                driver = webdriver.Chrome(
+                    service=Service(self.executable),
+                    options=self.options,
+                )
+            else:
+                driver = webdriver.Chrome(options=self.options)
             driver.implicitly_wait(5)
             return driver
 
