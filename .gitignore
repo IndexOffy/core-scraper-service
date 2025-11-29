@@ -160,4 +160,8 @@ cython_debug/
 #.idea/
 
 # Others
-geckodrivertests/.wdm/
+
+# Webdriver manager cache directories
+.wdm/
+tests/.wdm/
+geckodriver/
