@@ -1,43 +1,6 @@
-FROM public.ecr.aws/lambda/python:3.14
+FROM umihico/aws-lambda-selenium-python:latest
 
 WORKDIR ${LAMBDA_TASK_ROOT}
-RUN yum update -y && \
-    yum install -y \
-    wget \
-    unzip \
-    curl \
-    xorg-x11-server-Xvfb \
-    gtk3 \
-    libXtst6 \
-    libxkbcommon0 \
-    libxkbcommon-x11-0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libasound2 \
-    libpangocairo-1.0-0 \
-    libatk1.0-0 \
-    libcairo-gobject2 \
-    libgtk-3-0 \
-    libgdk-pixbuf2.0-0 \
-    libxss1 \
-    libgbm1 \
-    && yum clean all
-
-RUN yum install -y chromium chromium-headless || \
-    (wget -q -O /tmp/google-chrome.rpm "https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm" && \
-     yum localinstall -y /tmp/google-chrome.rpm && \
-     rm -f /tmp/google-chrome.rpm || echo "Chrome installation skipped")
-
-RUN CHROME_VERSION=$(google-chrome --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+\.\d+' | head -1 || echo "131.0.6778.85") && \
-    CHROMEDRIVER_VERSION=$(echo $CHROME_VERSION | cut -d. -f1) && \
-    wget -q -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}.0.6778.85/linux64/chromedriver-linux64.zip" || \
-    wget -q -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.85/linux64/chromedriver-linux64.zip" && \
-    unzip -q /tmp/chromedriver.zip -d /tmp && \
-    mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm -rf /tmp/chromedriver* || echo "ChromeDriver installation skipped"
 
 RUN pip install --no-cache-dir poetry
 
