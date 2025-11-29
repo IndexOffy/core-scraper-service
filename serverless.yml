@@ -4,7 +4,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.14
   region: ${self:custom.region}
   timeout: 900
   memorySize: 3008
@@ -68,7 +68,7 @@ custom:
     test: test
   pythonRequirements:
     dockerizePip: true
-    dockerImage: public.ecr.aws/sam/build-python3.12:latest
+    dockerImage: public.ecr.aws/sam/build-python3.14:latest
     layer: true
     attachAllFunctions: true
     slim: false
