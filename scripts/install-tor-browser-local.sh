@@ -58,3 +58,4 @@ echo ""
 echo "Add to your .env file:"
 echo "TOR_BROWSER_PATH=${INSTALL_DIR}"
 
+
