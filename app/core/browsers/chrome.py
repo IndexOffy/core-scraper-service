@@ -17,6 +17,9 @@ class Chrome(Browser):
         os.environ["WDM_LOCAL"] = "1"
         os.environ["WDM_LOG_LEVEL"] = "0"
 
+        cache_dir = "/tmp/.wdm"
+        os.makedirs(cache_dir, exist_ok=True)
+
         cache_manager = DriverCacheManager(root_dir="/tmp")
         base_path = ChromeDriverManager(cache_manager=cache_manager).install()
 
