@@ -19,6 +19,9 @@ fastapi = "^0.122.0"
 sqlalchemy = "^2.0.44"
 pymysql = "^1.1.2"
 pydantic-settings = "^2.12.0"
+h11 = ">=0.16.0"
+idna = ">=3.7"
+requests = ">=2.32.4"
 
 [tool.poetry.group.testing]
 optional = true
