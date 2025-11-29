@@ -34,15 +34,35 @@ runs:
     - name: 📦 Install Serverless plugins
       shell: bash
       run: |
-        if [ ! -f package.json ]; then
-          serverless plugin install -n serverless-python-requirements
-        fi
         npm install
 
-    - name: 📦 Install Poetry export plugin
+    - name: 🐳 Build and push Docker image to ECR
       shell: bash
+      env:
+        AWS_REGION: ${{ inputs.region }}
       run: |
-        poetry self add poetry-plugin-export || echo "Poetry export plugin already installed or not needed"
+        echo "🐳 Building Docker image..."
+        docker build -f docker/Dockerfile.lambda -t indexoffy-api:${{ inputs.stage }} .
+
+        echo "🔍 Getting AWS account ID..."
+        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        ECR_REPOSITORY_NAME="indexoffy-api"
+        ECR_REPOSITORY_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${{ inputs.region }}.amazonaws.com/${ECR_REPOSITORY_NAME}"
+
+        echo "📦 Creating ECR repository if it doesn't exist..."
+        aws ecr describe-repositories --repository-names ${ECR_REPOSITORY_NAME} --region ${{ inputs.region }} 2>/dev/null || \
+        aws ecr create-repository --repository-name ${ECR_REPOSITORY_NAME} --region ${{ inputs.region }} --image-scanning-configuration scanOnPush=true
+
+        echo "🔐 Logging in to Amazon ECR..."
+        aws ecr get-login-password --region ${{ inputs.region }} | docker login --username AWS --password-stdin ${ECR_REPOSITORY_URI}
+
+        echo "📤 Pushing image to ECR..."
+        IMAGE_TAG="${{ inputs.stage }}-${{ inputs.region }}"
+        docker tag indexoffy-api:${{ inputs.stage }} ${ECR_REPOSITORY_URI}:${IMAGE_TAG}
+        docker push ${ECR_REPOSITORY_URI}:${IMAGE_TAG}
+
+        echo "ECR_REPOSITORY_URI=${ECR_REPOSITORY_URI}" >> $GITHUB_ENV
+        echo "✅ Image pushed: ${ECR_REPOSITORY_URI}:${IMAGE_TAG}"
 
     - name: 🚀 Deploy to AWS Lambda
       shell: bash
@@ -52,6 +72,7 @@ runs:
         TOR_BROWSER_PATH: ${{ inputs.tor-browser-path }}
         TOR_DATA_DIR: ${{ inputs.tor-data-dir }}
         DATABASE_URL: ${{ inputs.database-url }}
+        ECR_REPOSITORY_URI: ${{ env.ECR_REPOSITORY_URI }}
       run: |
         echo "🚀 Deploying to AWS Lambda..."
         echo "Stage: ${{ inputs.stage }}"
