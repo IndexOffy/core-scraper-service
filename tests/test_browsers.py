@@ -87,9 +87,12 @@ class TestTorBrowser(unittest.TestCase):
 class TestChromeBrowser(unittest.TestCase):
     """Test Chrome browser class."""
 
-    @patch("app.core.browsers.chrome.ChromeDriverManager")
+    @patch("webdriver_manager.chrome.ChromeDriverManager")
+    @patch("webdriver_manager.core.driver_cache.DriverCacheManager")
     @patch.dict("os.environ", {"HOME": "/tmp", "WDM_LOCAL": "1"})
-    def test_chrome_initialization(self, mock_chrome_manager):
+    def test_chrome_initialization(
+        self, mock_chrome_manager, _mock_cache_manager
+    ):
         """Test Chrome browser initialization."""
         from app.core.browsers.chrome import Chrome
 
