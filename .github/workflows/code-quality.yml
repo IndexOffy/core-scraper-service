@@ -2,7 +2,7 @@ name: 🔍 Code Quality
 
 on:
   pull_request:
-    branches: ["main", "develop", "master"]
+    branches: ["master"]
   workflow_dispatch:
   workflow_call:
 
@@ -30,20 +30,16 @@ jobs:
           install-dependencies: 'code-quality'
 
       - name: 🔍 Ruff (Linting)
-        run: |
-          poetry run ruff check --config=.code_quality/ruff.toml app/ tests/ 2>/dev/null || poetry run ruff check --config=.code_quality/ruff.toml app/
+        run: poetry run ruff check --config=.code_quality/ruff.toml app/ tests/
 
       - name: 🎨 Ruff (Format Check)
-        run: |
-          poetry run ruff format --check --config=.code_quality/ruff.toml app/ tests/ 2>/dev/null || poetry run ruff format --check --config=.code_quality/ruff.toml app/
+        run: poetry run ruff format --check --config=.code_quality/ruff.toml app/ tests/
 
       - name: 🔍 Flake8
-        run: |
-          poetry run flake8 --append-config=.code_quality/.flake8 app/ tests/ 2>/dev/null || poetry run flake8 --append-config=.code_quality/.flake8 app/
+        run: poetry run flake8 --append-config=.code_quality/.flake8 app/ tests/
 
       - name: 🔍 MyPy (Type Checking)
-        run: |
-          poetry run mypy --config-file=.code_quality/mypy.ini app/ tests/ 2>/dev/null || poetry run mypy --config-file=.code_quality/mypy.ini app/
+        run: poetry run mypy --config-file=.code_quality/mypy.ini app/ tests/
 
       - name: ✅ Code Quality Summary
         if: always()
