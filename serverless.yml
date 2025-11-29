@@ -74,10 +74,11 @@ custom:
     slim: false
     strip: false
     zip: true
-    fileName: requirements-lambda.txt
     pipCmdExtraArgs:
       - --no-cache-dir
-    usePoetry: false
+    usePoetry: true
+    poetryPyprojectFile: pyproject.toml
+    poetryLockFile: poetry.lock
     usePipenv: false
     cleanupZipHelper: true
     noDeploy: false
@@ -107,7 +108,6 @@ package:
     - '!.mypy_cache/**'
     - '!*.md'
     - '!*.txt'
-    - '!requirements-lambda.txt'
     - '!.gitignore'
     - '!pytest.ini'
     - 'opt/tor-browser/**'

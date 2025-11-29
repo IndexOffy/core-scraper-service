@@ -7,7 +7,6 @@ WORKDIR $APP_PATH
 RUN apt-get -y update
 RUN apt-get install -y wget gnupg unzip
 
-# ===== Chrome stuff =====
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
@@ -16,10 +15,11 @@ RUN apt-get install -y google-chrome-stable
 
 RUN wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/108.0.5359.71/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
-# ===== Chrome stuff =====
+
+RUN pip install --upgrade pip poetry
+
+COPY pyproject.toml poetry.lock $APP_PATH/
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-root --only=main
 
 COPY ./src $APP_PATH/src
-COPY ./requirements.txt $APP_PATH/requirements.txt
-
-RUN pip install --upgrade pip
-RUN pip install -r $APP_PATH/requirements.txt --no-cache-dir

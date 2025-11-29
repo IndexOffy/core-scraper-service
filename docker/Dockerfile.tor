@@ -1,17 +1,9 @@
-# Dockerfile for local testing with Tor Browser support
-# Based on Ubuntu 22.04 (similar to Lambda environment)
-# Includes Tor Browser and all dependencies for scraping
-
 FROM ubuntu:22.04
 
-# Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 
-# Set working directory
 WORKDIR /app
-
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
     python3.13 \
     python3.13-dev \
@@ -44,21 +36,13 @@ RUN apt-get update && apt-get install -y \
     firefox \
     && rm -rf /var/lib/apt/lists/*
 
-# Create symlink for python
 RUN ln -s /usr/bin/python3.13 /usr/bin/python
+RUN pip3 install --upgrade pip setuptools wheel poetry
 
-# Upgrade pip
-RUN pip3 install --upgrade pip setuptools wheel
+COPY pyproject.toml poetry.lock /app/
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-root --only=main
 
-# Copy requirements
-COPY requirements-lambda.txt /app/
-
-# Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements-lambda.txt
-
-# Download and install Tor Browser
-# Note: In production, Tor Browser should be provided via Lambda Layer
-# This is for local testing only
 ARG TOR_BROWSER_VERSION=13.0.12
 ARG TOR_BROWSER_LANG=en-US
 RUN mkdir -p /opt/tor-browser && \
@@ -68,22 +52,17 @@ RUN mkdir -p /opt/tor-browser && \
     rm /tmp/tor-browser.tar.xz && \
     chmod +x /opt/tor-browser/Browser/firefox
 
-# Set Tor Browser path
 ENV TOR_BROWSER_PATH=/opt/tor-browser
 ENV TOR_DATA_DIR=/tmp/tor-data
 ENV DISPLAY=:99
 
-# Copy application code
 COPY app /app/app
 COPY lambda_handler.py /app/
 
-# Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 ENV AWS_LAMBDA_FUNCTION_NAME=local-test
 
-# Expose port for FastAPI
 EXPOSE 8000
 
-# Start Xvfb and run the application
 CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & python -m uvicorn app.__main__:app --host 0.0.0.0 --port 8000"]

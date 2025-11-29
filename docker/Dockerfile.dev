@@ -1,16 +1,9 @@
-# Dockerfile for local development
-# Based on Ubuntu 22.04 with all development tools
-
 FROM ubuntu:22.04
 
-# Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 
-# Set working directory
 WORKDIR /app
-
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
     python3.13 \
     python3.13-dev \
@@ -38,30 +31,20 @@ RUN apt-get update && apt-get install -y \
     firefox \
     && rm -rf /var/lib/apt/lists/*
 
-# Create symlink for python
 RUN ln -s /usr/bin/python3.13 /usr/bin/python
+RUN pip3 install --upgrade pip setuptools wheel poetry
 
-# Upgrade pip
-RUN pip3 install --upgrade pip setuptools wheel
+COPY pyproject.toml poetry.lock /app/
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-root --only=main
 
-# Copy requirements
-COPY requirements-lambda.txt /app/requirements-lambda.txt
-COPY requirements.txt /app/requirements.txt 2>/dev/null || true
-
-# Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements-lambda.txt
-
-# Copy application code
 COPY app /app/app
 COPY lambda_handler.py /app/
 
-# Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 ENV SCOPE=development
 
-# Expose port for FastAPI
 EXPOSE 8000
 
-# Default command (can be overridden)
 CMD ["python", "-m", "uvicorn", "app.__main__:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

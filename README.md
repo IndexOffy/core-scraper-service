@@ -37,16 +37,43 @@ SCOPE=development
 
 ## Development
 
+### Dependencies Management
+
+**All dependencies are managed through Poetry** (`pyproject.toml` and `poetry.lock`).
+
 ```bash
 # Install dependencies
 poetry install
 
+# Install with development dependencies
+poetry install --with code-quality,testing
+
+# Update dependencies
+poetry update
+
+# Add a new dependency
+poetry add package-name
+
+# Add a development dependency
+poetry add --group code-quality package-name
+```
+
+### Running Locally
+
+```bash
 # Run locally (Tor Browser will be installed automatically if needed)
 poetry run uvicorn app.__main__:app --reload
 
 # Or use Docker
 docker-compose -f docker/docker-compose.yml up dev
 ```
+
+### Lambda Deployment
+
+For AWS Lambda deployment, the project uses Poetry directly:
+- `serverless.yml` is configured with `usePoetry: true`
+- Dockerfiles use Poetry to install dependencies
+- All dependencies are managed through `pyproject.toml` and `poetry.lock`
 
 ## Commit Style
 
