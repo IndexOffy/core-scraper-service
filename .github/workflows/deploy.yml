@@ -32,6 +32,9 @@ jobs:
       needs.test.result == 'success'
 
     steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
       - name: 🔧 Setup Python and Poetry
         uses: ./.github/actions/setup-python-poetry
         with:

@@ -15,6 +15,9 @@ jobs:
         python-version: ["3.14"]
 
     steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
       - name: 🔧 Setup Python and Poetry
         uses: ./.github/actions/setup-python-poetry
         with:
