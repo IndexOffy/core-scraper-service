@@ -11,18 +11,6 @@ provider:
   stage: ${self:custom.stage}
   httpApi:
     cors: true
-    corsConfig:
-      allowOrigins:
-        - '*'
-      allowMethods:
-        - GET
-        - POST
-        - PUT
-        - DELETE
-        - OPTIONS
-      allowHeaders:
-        - Content-Type
-        - Authorization
 
   environment:
     SCOPE: ${self:custom.scope.${self:provider.stage}, 'production'}
