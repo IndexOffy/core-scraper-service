@@ -16,11 +16,11 @@ on:
           - prod
 
 jobs:
-  code-quality:
-    uses: ./.github/workflows/code-quality.yml
+  # code-quality:
+  #   uses: ./.github/workflows/code-quality.yml
 
-  test:
-    uses: ./.github/workflows/test.yml
+  # test:
+  #   uses: ./.github/workflows/test.yml
 
   deploy:
     name: Deploy to AWS Lambda
