@@ -33,7 +33,8 @@ class Chrome(Browser):
 
         if "THIRD_PARTY_NOTICES.chromedriver" in base_path:
             self.executable = os.path.join(
-                os.path.dirname(base_path), "chromedriver",
+                os.path.dirname(base_path),
+                "chromedriver",
             )
         else:
             self.executable = base_path
@@ -48,16 +49,19 @@ class Chrome(Browser):
             options.add_argument("--headless")
 
         options.add_experimental_option(
-            "excludeSwitches", ["enable-automation"],
+            "excludeSwitches",
+            ["enable-automation"],
         )
         options.add_experimental_option(
-            "useAutomationExtension", False,
+            "useAutomationExtension",
+            False,
         )
 
         self.options = options
 
     def get_instance(self) -> Any:
         """Get browser driver instance."""
+
         def new_driver() -> Any:
             driver = webdriver.Chrome(
                 service=Service(self.executable),
