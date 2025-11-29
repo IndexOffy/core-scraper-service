@@ -35,13 +35,13 @@ jobs:
       - name: 🔧 Setup Python and Poetry
         uses: ./.github/actions/setup-python-poetry
         with:
-          python-version: '3.12'
+          python-version: '3.14'
           install-dependencies: ''
 
       - name: 🔧 Setup Environment
         uses: ./.github/actions/setup-environment
         with:
-          python-version: '3.12'
+          python-version: '3.14'
 
       - name: 🔐 Configure AWS
         uses: ./.github/actions/configure-aws
