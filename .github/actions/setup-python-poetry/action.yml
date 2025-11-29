@@ -1,0 +1,33 @@
+name: 'Setup Python and Poetry'
+description: 'Setup Python, Poetry and install dependencies'
+inputs:
+  python-version:
+    description: 'Python version'
+    required: false
+    default: '3.13'
+  poetry-version:
+    description: 'Poetry version'
+    required: false
+    default: 'latest'
+  install-dependencies:
+    description: 'Install dependencies groups (comma-separated)'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐍 Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        allow-prereleases: true
+
+    - name: 📦 Setup Poetry
+      uses: ./.github/actions/setup-poetry
+      with:
+        poetry-version: ${{ inputs.poetry-version }}
+        install-dependencies: ${{ inputs.install-dependencies }}
