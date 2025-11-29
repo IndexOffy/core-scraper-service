@@ -8,7 +8,7 @@ license = "GPL-3.0-only"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.12"
 selenium = "^4.18.1"
 webdriver-manager = "^4.0.1"
 tbselenium = "^0.9.0"
