@@ -4,13 +4,17 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: python3.14
   region: ${self:custom.region}
   timeout: 900
   memorySize: 3008
   stage: ${self:custom.stage}
   httpApi:
     cors: true
+
+  ecr:
+    images:
+      appImage:
+        uri: ${env:ECR_REPOSITORY_URI}:${self:custom.stage}-${self:provider.region}
 
   environment:
     SCOPE: ${self:custom.scope.${self:provider.stage}, 'production'}
@@ -29,12 +33,18 @@ provider:
             - logs:CreateLogStream
             - logs:PutLogEvents
           Resource: '*'
+        - Effect: Allow
+          Action:
+            - ecr:GetAuthorizationToken
+            - ecr:BatchCheckLayerAvailability
+            - ecr:GetDownloadUrlForLayer
+            - ecr:BatchGetImage
+          Resource: '*'
 
 functions:
   api:
-    handler: lambda_handler.lambda_handler
-    layers:
-      - { Ref: PythonRequirementsLambdaLayer }
+    image:
+      uri: ${self:provider.ecr.images.appImage.uri}
     events:
       - httpApi:
           path: /{proxy+}
@@ -43,10 +53,6 @@ functions:
           path: /
           method: ANY
 
-plugins:
-  - serverless-python-requirements
-  - serverless-scriptable-plugin
-
 custom:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
@@ -54,32 +60,6 @@ custom:
     dev: development
     prod: production
     test: test
-  pythonRequirements:
-    dockerizePip: true
-    dockerImage: public.ecr.aws/sam/build-python3.14:latest
-    layer: true
-    attachAllFunctions: true
-    slim: false
-    strip: false
-    zip: true
-    pipCmdExtraArgs:
-      - --no-cache-dir
-    usePoetry: true
-    poetryPyprojectFile: pyproject.toml
-    poetryLockFile: poetry.lock
-    usePipenv: false
-    cleanupZipHelper: true
-    noDeploy: false
-    noDeps: false
-    invalidateCaches: true
-  noDepsExclude:
-    - boto3
-    - botocore
-
-scriptable:
-  hooks:
-    before:package:createDeploymentArtifacts:
-      - bash scripts/download-tor-browser.sh opt/tor-browser || echo "Tor Browser download failed, will use auto-detection"
 
 package:
   patterns:
