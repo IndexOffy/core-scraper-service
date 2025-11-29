@@ -5,8 +5,8 @@ ENV TZ=UTC
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y \
-    python3.13 \
-    python3.13-dev \
+    python3.14 \
+    python3.14-dev \
     python3-pip \
     python3-venv \
     wget \
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
     firefox \
     && rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/bin/python3.13 /usr/bin/python
+RUN ln -s /usr/bin/python3.14 /usr/bin/python
 RUN pip3 install --upgrade pip setuptools wheel poetry
 
 COPY pyproject.toml poetry.lock /app/
