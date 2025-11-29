@@ -15,18 +15,10 @@ jobs:
         python-version: ["3.13"]
 
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🐍 Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: 🔧 Setup Python and Poetry
+        uses: ./.github/actions/setup-python-poetry
         with:
           python-version: ${{ matrix.python-version }}
-          allow-prereleases: true
-
-      - name: 📦 Setup Poetry
-        uses: ./.github/actions/setup-poetry
-        with:
           install-dependencies: ''
 
       - name: 🧪 Run tests with unittest

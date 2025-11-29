@@ -32,18 +32,16 @@ jobs:
       needs.test.result == 'success'
 
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
+      - name: 🔧 Setup Python and Poetry
+        uses: ./.github/actions/setup-python-poetry
+        with:
+          python-version: '3.12'
+          install-dependencies: ''
 
       - name: 🔧 Setup Environment
         uses: ./.github/actions/setup-environment
         with:
           python-version: '3.12'
-
-      - name: 📦 Setup Poetry
-        uses: ./.github/actions/setup-poetry
-        with:
-          install-dependencies: ''
 
       - name: 🔐 Configure AWS
         uses: ./.github/actions/configure-aws
