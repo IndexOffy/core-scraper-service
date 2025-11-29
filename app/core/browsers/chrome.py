@@ -12,7 +12,15 @@ from app.core.browsers.abc import Browser
 
 
 class Chrome(Browser):
+    """Chrome browser implementation."""
+
     def _set_executable(self) -> None:
+        lambda_path = "/var/task/chromedriver"
+
+        if os.path.exists(lambda_path):
+            self.executable = lambda_path
+            return
+
         os.environ["HOME"] = "/tmp"
         os.environ["WDM_LOCAL"] = "1"
         os.environ["WDM_LOG_LEVEL"] = "0"
@@ -32,14 +40,25 @@ class Chrome(Browser):
 
     def _set_options(self) -> None:
         options = webdriver.ChromeOptions()
+
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-blink-features=AutomationControlled")
         if self.headless:
             options.add_argument("--headless")
+
+        options.add_experimental_option(
+            "excludeSwitches", ["enable-automation"]
+        )
+        options.add_experimental_option("useAutomationExtension", False)
+
         self.options = options
 
     def get_instance(self) -> Any:
         def new_driver():
             driver = webdriver.Chrome(
-                service=Service(self.executable), options=self.options
+                service=Service(self.executable),
+                options=self.options,
             )
             driver.implicitly_wait(5)
             return driver
