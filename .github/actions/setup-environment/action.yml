@@ -1,5 +1,14 @@
 name: 'Setup Environment'
 description: 'Setup Python, Node.js and Serverless Framework'
+inputs:
+  python-version:
+    description: 'Python version'
+    required: false
+    default: '3.13'
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '20'
 runs:
   using: 'composite'
   steps:
